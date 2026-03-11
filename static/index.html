@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiWallet — Digital Wallet</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --card-hover: #22223a;
+            --primary: #6c63ff;
+            --primary-hover: #5a52e0;
+            --success: #00c897;
+            --danger: #ff4d6a;
+            --text: #e8e8f0;
+            --text-muted: #8888a0;
+            --border: #2a2a40;
+            --bronze: #cd7f32;
+            --silver: #c0c0c0;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .nav-brand span { color: var(--text); }
+        .nav-links { display: flex; gap: 0.5rem; }
+        .nav-links button {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .nav-links button:hover { color: var(--text); border-color: var(--primary); }
+        .nav-links button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .btn-logout {
+            background: transparent !important;
+            color: var(--danger) !important;
+            border-color: var(--danger) !important;
+        }
+        .btn-logout:hover { background: var(--danger) !important; color: #fff !important; }
+
+        /* ── LAYOUT ── */
+        .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        /* ── AUTH PAGES ── */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 64px);
+        }
+        .auth-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+        }
+        .auth-card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.4rem;
+        }
+        .auth-card p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 1.8rem;
+            font-size: 0.9rem;
+        }
+
+        /* ── FORM ── */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+        .form-row { display: flex; gap: 1rem; }
+        .form-row .form-group { flex: 1; }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #00b085; }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .switch-link a {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .switch-link a:hover { text-decoration: underline; }
+
+        /* ── ALERT ── */
+        .alert {
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            display: none;
+        }
+        .alert-error { background: rgba(255,77,106,0.15); color: var(--danger); border: 1px solid rgba(255,77,106,0.3); }
+        .alert-success { background: rgba(0,200,151,0.15); color: var(--success); border: 1px solid rgba(0,200,151,0.3); }
+        .alert.show { display: block; }
+
+        /* ── DASHBOARD ── */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: var(--primary); }
+        .card h3 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        .card-full { grid-column: 1 / -1; }
+
+        /* ── BALANCE CARD ── */
+        .balance-amount {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--success);
+            line-height: 1;
+        }
+        .balance-amount span {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .balance-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        /* ── USER INFO ── */
+        .user-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .user-info-row:last-child { border: none; }
+        .user-info-row .label { color: var(--text-muted); }
+
+        /* ── TIER BADGE ── */
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .tier-bronze { background: rgba(205,127,50,0.15); color: var(--bronze); border: 1px solid rgba(205,127,50,0.3); }
+        .tier-silver { background: rgba(192,192,192,0.15); color: var(--silver); border: 1px solid rgba(192,192,192,0.3); }
+        .tier-gold { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+
+        /* ── DEPOSIT FORM ── */
+        .deposit-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .deposit-row .form-group { flex: 1; margin-bottom: 0; }
+        .deposit-row .btn { width: auto; padding: 0.7rem 2rem; margin-top: 0; }
+
+        /* ── TIERS TABLE ── */
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .tier-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .tier-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .tier-card .tier-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .tier-card .tier-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.8rem; }
+        .tier-card .tier-detail {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .tier-card .tier-detail strong { color: var(--text); }
+
+        /* ── WELCOME ── */
+        .welcome-header {
+            margin-bottom: 2rem;
+        }
+        .welcome-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .welcome-header h1 span { color: var(--primary); }
+        .welcome-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+
+        /* ── HIDDEN ── */
+        .hidden { display: none !important; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 640px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .tiers-grid { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; gap: 0; }
+            .deposit-row { flex-direction: column; align-items: stretch; }
+            .deposit-row .btn { width: 100%; }
+            .balance-amount { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<nav>
+    <div class="nav-brand">Digi<span>Wallet</span></div>
+    <div class="nav-links" id="navLinks">
+        <button onclick="showPage('signup')" id="nav-signup" class="active">Sign Up</button>
+        <button onclick="showPage('login')" id="nav-login">Login</button>
+    </div>
+</nav>
+
+<!-- ══════════ SIGNUP PAGE ══════════ -->
+<div id="page-signup" class="auth-container">
+    <div class="auth-card">
+        <h2>Create Account</h2>
+        <p class="subtitle">Start managing your digital wallet today</p>
+        <div id="signup-alert" class="alert"></div>
+        <form onsubmit="handleSignup(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="signup-fname" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="signup-lname" placeholder="Doe" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signup-email" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signup-password" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+                <label>Select Tier</label>
+                <select id="signup-tier">
+                    <option value="1">🥉 Bronze — Daily Limit: ₹1,000 | Fee: 5%</option>
+                    <option value="2">🥈 Silver — Daily Limit: ₹5,000 | Fee: 3%</option>
+                    <option value="3">🥇 Gold — Daily Limit: ₹20,000 | Fee: 1%</option>
+                </select>
+            </div>
+            <button type="submit" class="btn" id="signup-btn">Create Account</button>
+        </form>
+        <p class="switch-link">Already have an account? <a onclick="showPage('login')">Login</a></p>
+    </div>
+</div>
+
+<!-- ══════════ LOGIN PAGE ══════════ -->
+<div id="page-login" class="auth-container hidden">
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to access your wallet</p>
+        <div id="login-alert" class="alert"></div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn" id="login-btn">Login</button>
+        </form>
+        <p class="switch-link">Don't have an account? <a onclick="showPage('signup')">Sign Up</a></p>
+    </div>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="page-dashboard" class="container hidden">
+
+    <div class="welcome-header">
+        <h1>Hello, <span id="dash-name">User</span> 👋</h1>
+        <p>Here's your wallet overview</p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <!-- Balance Card -->
+        <div class="card">
+            <h3>💰 Wallet Balance</h3>
+            <div class="balance-amount"><span>₹</span><span id="dash-balance">0.00</span></div>
+            <p class="balance-label">Available balance</p>
+        </div>
+
+        <!-- User Tier Card -->
+        <div class="card">
+            <h3>⭐ Your Tier</h3>
+            <div style="margin-bottom: 1rem;">
+                <span id="dash-tier-badge" class="tier-badge tier-bronze">Bronze</span>
+            </div>
+            <div class="user-info-row">
+                <span class="label">Daily Limit</span>
+                <span id="dash-daily-limit">₹1,000</span>
+            </div>
+            <div class="user-info-row">
+                <span class="label">Transaction Fee</span>
+                <span id="dash-tx-fee">5%</span>
+            </div>
+        </div>
+
+        <!-- Deposit Card -->
+        <div class="card card-full">
+            <h3>📥 Deposit Money</h3>
+            <div id="deposit-alert" class="alert"></div>
+            <form onsubmit="handleDeposit(event)">
+                <div class="deposit-row">
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" id="deposit-amount" placeholder="Enter amount" min="1" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn btn-success" id="deposit-btn">Deposit</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="card">
+            <h3>👤 Account Info</h3>
+            <div class="user-info-row">
+                <span class="label">User ID</span>
+                <span id="dash-user-id">—</span>
+            </div>
+            <div class="user-info-row">
+                <span class="label">Name</span>
+                <span id="dash-fullname">—</span>
+            </div>
+            <div class="user-info-row">
+                <span class="label">Email</span>
+                <span id="dash-email">—</span>
+            </div>
+            <div class="user-info-row">
+                <span class="label">Joined</span>
+                <span id="dash-joined">—</span>
+            </div>
+        </div>
+
+        <!-- All Tiers Card -->
+        <div class="card">
+            <h3>📊 All Tiers</h3>
+            <div class="tiers-grid" id="tiers-container"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const API = '';  // same origin
+    let currentUser = null; // stores user data after signup/login
+
+    // ── PAGE SWITCHING ──
+    function showPage(page) {
+        document.getElementById('page-signup').classList.add('hidden');
+        document.getElementById('page-login').classList.add('hidden');
+        document.getElementById('page-dashboard').classList.add('hidden');
+
+        document.getElementById(`page-${page}`).classList.remove('hidden');
+
+        // update nav
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+        const navBtn = document.getElementById(`nav-${page}`);
+        if (navBtn) navBtn.classList.add('active');
+    }
+
+    function showDashboard(user) {
+        currentUser = user;
+        showPage('dashboard');
+
+        // update nav for logged-in state
+        document.getElementById('navLinks').innerHTML = `
+            <button class="active" onclick="showPage('dashboard')">Dashboard</button>
+            <button class="btn-logout" onclick="handleLogout()">Logout</button>
+        `;
+
+        // fill user info
+        document.getElementById('dash-name').textContent = user.first_name;
+        document.getElementById('dash-user-id').textContent = user.id;
+        document.getElementById('dash-fullname').textContent = `${user.first_name} ${user.last_name}`;
+        document.getElementById('dash-email').textContent = user.email;
+        document.getElementById('dash-joined').textContent = new Date(user.created_at).toLocaleDateString('en-IN', {
+            year: 'numeric', month: 'short', day: 'numeric'
+        });
+
+        // load wallet & tier & all tiers
+        loadWallet(user.id);
+        loadUserTier(user.id);
+        loadAllTiers();
+    }
+
+    function handleLogout() {
+        currentUser = null;
+        document.getElementById('navLinks').innerHTML = `
+            <button onclick="showPage('signup')" id="nav-signup" class="active">Sign Up</button>
+            <button onclick="showPage('login')" id="nav-login">Login</button>
+        `;
+        showPage('signup');
+    }
+
+    // ── ALERTS ──
+    function showAlert(id, message, type) {
+        const el = document.getElementById(id);
+        el.className = `alert alert-${type} show`;
+        el.textContent = message;
+        if (type === 'success') setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ── SIGNUP ──
+    async function handleSignup(e) {
+        e.preventDefault();
+        const btn = document.getElementById('signup-btn');
+        btn.disabled = true;
+        btn.textContent = 'Creating...';
+
+        try {
+            const res = await fetch(`${API}/auth/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    first_name: document.getElementById('signup-fname').value,
+                    last_name: document.getElementById('signup-lname').value,
+                    email: document.getElementById('signup-email').value,
+                    password: document.getElementById('signup-password').value,
+                    tier_id: parseInt(document.getElementById('signup-tier').value)
+                })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlert('signup-alert', data.detail || 'Signup failed', 'error');
+                return;
+            }
+
+            showDashboard(data);
+        } catch (err) {
+            showAlert('signup-alert', 'Connection error', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Create Account';
+        }
+    }
+
+    // ── LOGIN ──
+    async function handleLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('login-btn');
+        btn.disabled = true;
+        btn.textContent = 'Logging in...';
+
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        try {
+            // first login to verify credentials
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlert('login-alert', data.detail || 'Login failed', 'error');
+                return;
+            }
+
+            // login succeeded — now signup endpoint with same creds to get user data
+            // Actually, we need to get user info. Let's do a signup call which will fail
+            // with "already registered", so instead let's store user data differently.
+            // We'll do a workaround: signup returns user data, login returns token.
+            // Since we don't have a GET /user/me endpoint, we'll store data from signup
+            // and re-fetch using the email. But we don't have that endpoint either.
+            
+            // Simple approach: store signup data in localStorage on signup,
+            // retrieve on login. For a real app you'd add a GET /auth/me endpoint.
+            
+            const stored = localStorage.getItem('dw_user_' + email);
+            if (stored) {
+                showDashboard(JSON.parse(stored));
+            } else {
+                // If no stored data, show basic dashboard with token info
+                showAlert('login-alert', 'Login successful! But no cached user data. Please sign up first on this browser.', 'error');
+            }
+        } catch (err) {
+            showAlert('login-alert', 'Connection error', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Login';
+        }
+    }
+
+    // Override showDashboard to also store user data
+    const _origShowDashboard = showDashboard;
+    showDashboard = function(user) {
+        if (user.email) {
+            localStorage.setItem('dw_user_' + user.email, JSON.stringify(user));
+        }
+        _origShowDashboard(user);
+    };
+
+    // ── LOAD WALLET ──
+    async function loadWallet(userId) {
+        try {
+            const res = await fetch(`${API}/wallet/${userId}`);
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('dash-balance').textContent = 
+                    parseFloat(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            }
+        } catch (err) {
+            document.getElementById('dash-balance').textContent = '0.00';
+        }
+    }
+
+    // ── LOAD USER TIER ──
+    async function loadUserTier(userId) {
+        try {
+            const res = await fetch(`${API}/tier/user/${userId}`);
+            const data = await res.json();
+            if (res.ok) {
+                const badge = document.getElementById('dash-tier-badge');
+                const tierName = data.tier_name.toLowerCase();
+                badge.textContent = `${tierName === 'bronze' ? '🥉' : tierName === 'silver' ? '🥈' : '🥇'} ${data.tier_name}`;
+                badge.className = `tier-badge tier-${tierName}`;
+                document.getElementById('dash-daily-limit').textContent = `₹${data.daily_limit.toLocaleString('en-IN')}`;
+                document.getElementById('dash-tx-fee').textContent = `${data.transaction_fee}%`;
+            }
+        } catch (err) {}
+    }
+
+    // ── LOAD ALL TIERS ──
+    async function loadAllTiers() {
+        try {
+            const res = await fetch(`${API}/tier/`);
+            const tiers = await res.json();
+            if (res.ok) {
+                const container = document.getElementById('tiers-container');
+                const icons = { 'Bronze': '🥉', 'Silver': '🥈', 'Gold': '🥇' };
+                container.innerHTML = tiers.map(t => `
+                    <div class="tier-card">
+                        <div class="tier-icon">${icons[t.tier_name] || '⭐'}</div>
+                        <div class="tier-name">${t.tier_name}</div>
+                        <div class="tier-detail">Daily Limit: <strong>₹${t.daily_limit.toLocaleString('en-IN')}</strong></div>
+                        <div class="tier-detail">Fee: <strong>${t.transaction_fee}%</strong></div>
+                    </div>
+                `).join('');
+            }
+        } catch (err) {}
+    }
+
+    // ── DEPOSIT ──
+    async function handleDeposit(e) {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const btn = document.getElementById('deposit-btn');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        const amount = parseFloat(document.getElementById('deposit-amount').value);
+
+        try {
+            const res = await fetch(`${API}/wallet/deposit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: currentUser.id, amount })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlert('deposit-alert', data.detail || 'Deposit failed', 'error');
+                return;
+            }
+
+            document.getElementById('dash-balance').textContent =
+                parseFloat(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('deposit-amount').value = '';
+            showAlert('deposit-alert', `₹${amount.toLocaleString('en-IN')} deposited successfully!`, 'success');
+        } catch (err) {
+            showAlert('deposit-alert', 'Connection error', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Deposit';
+        }
+    }
+</script>
+
+</body>
+</html>
