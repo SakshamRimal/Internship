@@ -27,12 +27,39 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 # this is used to ensure if tables and database is connected and instantiated
 def create_db_and_tables():
     try:
-        # drop old tables first so they get recreated with correct columns
-        # remove this line once your schema is stable
+        # in engine, it will create the engine for the database so that we can interact it with the database
         SQLModel.metadata.create_all(engine)
         print("Database created successfully")
     except Exception as e:
         print("Database creation failed:", e)
+
+
+# these are the fixed tiers — they are always seeded on startup and cannot be changed by users
+def seed_default_tiers():
+    from app.db.models.user import UserTiers
+
+    # these 3 tiers are fixed and will always exist in the database
+    fixed_tiers = [
+        {"tier_name": "Bronze", "daily_limit": 1000, "transaction_fee": 5},
+        {"tier_name": "Silver", "daily_limit": 5000, "transaction_fee": 3},
+        {"tier_name": "Gold",   "daily_limit": 20000, "transaction_fee": 1},
+    ]
+
+    session = Session(engine)
+    try:
+        for tier_data in fixed_tiers:
+            # only insert if the tier doesn't already exist
+            existing = session.query(UserTiers).filter_by(tier_name=tier_data["tier_name"]).first()
+            if not existing:
+                tier = UserTiers(**tier_data)
+                session.add(tier)
+        session.commit()
+        print("Default tiers seeded successfully")
+    except Exception as e:
+        session.rollback()
+        print("Seeding tiers failed:", e)
+    finally:
+        session.close()
 
 
 # a session is what store the object memory so that we dont need to use it again and again
@@ -44,7 +71,8 @@ def get_session():
     except Exception as e:
         session.rollback()
         print("Database transaction failed:", e)
-        raise e  # propagate exception to FastAPI
+        raise e
+    # propagate exception to FastAPI
     # use logger instead
     #custom exception
     finally:
