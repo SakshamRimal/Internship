@@ -1,5 +1,11 @@
-# Internship
-Tasks for my internship
-Week1 - branch week1
--Command-line expense tracker with categorization, budgeting, and
-transaction history
+# Week 1 Internship Task – Expense Tracker
+
+## Task Overview
+**Branch:** `week1`  
+Develop a **Command-Line Expense Tracker** that includes:
+
+- Categorization of expenses
+- Budget tracking
+- Transaction history
+
+---
