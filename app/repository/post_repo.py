@@ -30,12 +30,10 @@ async def update_post_repo(session: Session, id: int, post_data: post_schema.Pos
     db_post = session.get(Posts, id)
     if not db_post:
         return None
-
     # 2. Update the fields
     update_data = post_data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_post, key, value)
-
     # 3. Save
     session.add(db_post)
     session.commit()
