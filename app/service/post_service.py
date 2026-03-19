@@ -1,44 +1,134 @@
+from typing import List, Dict
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-
-from app.repository.post_repo import get_post_repo, create_post_repo, get_post_by_id_repo, update_post_repo, delete_post_repo
-from app.schemas.post_schema import PostSchemas
-
-# use session from orm in repo and service only use the session dependency in routing in our main
-
-async def get_all_post_service(session: Session):
-    posts = await get_post_repo(session)
-    if not posts:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No posts found")
-    return posts
-
-async def create_post_service(session: Session , post: PostSchemas):
-    new_post = PostSchemas(**post.model_dump())
-    created_post = await create_post_repo(session , new_post)
-    if not created_post:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not created")
-    return created_post
-
-async def get_post_by_id_service(session: Session  ,post_id: int):
-    post = await get_post_by_id_repo(session , post_id )
-    if post is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
-    return post
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.logger import logger
+from app.repository.post_repo import post_repo
+from app.schemas.post_schema import PostCreate
+from app.models.post_model import Posts
 
 
-async def update_post_service(session: Session, post_id: int, post_schema: PostSchemas):
-    # Pass the data to the repo and let the repo return the updated object
-    updated_post = await update_post_repo(session, post_id, post_schema)
-    if not updated_post:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post with id {post_id} not found"
-        )
-    return updated_post
+class PostService:
 
-async def delete_post_service(session: Session , post_id: int):
-    row_count = await delete_post_repo(session , post_id)
-    if row_count == 0:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
-    return {"deleted": f"Post with id:{post_id} deleted"}
+    @staticmethod
+    async def get_all_post_service(session: AsyncSession) -> List[Posts]:
+        try:
+            posts = await post_repo.get_post_repo(session)
+            if not posts:
+                logger.warning("Get All Posts: No records found in database")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No posts found"
+                )
 
+            logger.info(f"Get All Posts: Successfully fetched {len(posts)} posts")
+            return posts
+
+        except HTTPException:
+            raise
+        except Exception:
+            logger.exception("Get All Posts: Unexpected system error")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal Server Error"
+            )
+
+    @staticmethod
+    async def create_post_service(session: AsyncSession, post: PostCreate) -> Posts:
+        post_data = post.model_dump()
+        try:
+            created_post = await post_repo.create_post_repo(session, post_data)
+
+            if not created_post:
+                logger.error(f"Create Post: Repository failed to return object | data={post_data}")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Post could not be created"
+                )
+
+            logger.info(f"Create Post: Success | id={created_post.id}")
+            return created_post
+
+        except HTTPException:
+            raise
+        except Exception:
+            logger.exception(f"Create Post: Critical error | data={post_data}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal Server Error"
+            )
+
+    @staticmethod
+    async def get_post_by_id_service(session: AsyncSession, post_id: int) -> Posts:
+        try:
+            post = await post_repo.get_post_by_id_repo(session, post_id)
+
+            if post is None:
+                logger.warning(f"Get Post By ID: Not found | id={post_id}")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Post not found"
+                )
+
+            logger.info(f"Get Post By ID: Success | id={post_id}")
+            return post
+
+        except HTTPException:
+            raise
+        except Exception:
+            logger.exception(f"Get Post By ID: System error | id={post_id}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal Server Error"
+            )
+
+    @staticmethod
+    async def update_post_service(session: AsyncSession, post_id: int, post: PostCreate) -> Posts:
+        post_data = post.model_dump(exclude_unset=True)
+        try:
+            updated_post = await post_repo.update_post_repo(session, post_id, post_data)
+
+            if not updated_post:
+                logger.warning(f"Update Post: Target not found | id={post_id}")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Post with id {post_id} not found"
+                )
+
+            logger.info(f"Update Post: Success | id={post_id}")
+            return updated_post
+
+        except HTTPException:
+            raise
+        except Exception:
+            logger.exception(f"Update Post: System error | id={post_id}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal Server Error"
+            )
+
+    @staticmethod
+    async def delete_post_service(session: AsyncSession, post_id: int) -> Dict[str, str]:
+        try:
+            deleted = await post_repo.delete_post_repo(session, post_id)
+
+            if not deleted:
+                logger.warning(f"Delete Post: Target not found | id={post_id}")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Post not found"
+                )
+
+            logger.info(f"Delete Post: Success | id={post_id}")
+            return {"detail": f"Post with id {post_id} deleted successfully"}
+
+        except HTTPException:
+            raise
+        except Exception:
+            logger.exception(f"Delete Post: System error | id={post_id}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal Server Error"
+            )
+
+
+post_service = PostService()
