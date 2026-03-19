@@ -1,0 +1,98 @@
+2026-03-19 10:56:37,757 | INFO | app_global | Database connected successfully
+2026-03-19 10:56:39,974 | INFO | app_global | Database connected successfully
+2026-03-19 11:00:24,130 | INFO | app_global | Database connected successfully
+2026-03-19 11:00:47,515 | INFO | app_global | Fetched 5 posts
+2026-03-19 11:01:35,125 | INFO | app_global | Post created successfully | id=13
+2026-03-19 11:04:10,386 | INFO | app_global | Database connected successfully
+2026-03-19 11:06:31,262 | INFO | app_global | Database connected successfully
+2026-03-19 11:07:20,009 | INFO | app_global | Database connected successfully
+2026-03-19 11:07:54,992 | INFO | app_global | Database connected successfully
+2026-03-19 11:08:56,731 | INFO | app_global | Database connected successfully
+2026-03-19 11:09:49,907 | INFO | app_global | Database connected successfully
+2026-03-19 11:09:53,596 | WARNING | app_global | Get Post By ID: Not found | id=14
+2026-03-19 11:10:17,533 | INFO | app_global | Create Post: Success | id=14
+2026-03-19 11:10:24,347 | INFO | app_global | Create Post: Success | id=15
+2026-03-19 11:31:13,370 | INFO | app_global | Database connected successfully
+2026-03-19 11:31:30,918 | ERROR | app_global | Get All Posts: Unexpected system error
+Traceback (most recent call last):
+  File "/home/sakshamrimal/FastAPI/SocialMediaApp/app/service/user_service.py", line 15, in get_user_service
+    logger.info(f"Get All Posts: Successfully fetched {len(users)} posts")
+                                                       ~~~^^^^^^^
+TypeError: object of type 'coroutine' has no len()
+2026-03-19 11:33:22,960 | INFO | app_global | Database connected successfully
+2026-03-19 11:33:31,375 | ERROR | app_global | Get All Posts: Unexpected system error
+Traceback (most recent call last):
+  File "/home/sakshamrimal/FastAPI/SocialMediaApp/app/service/user_service.py", line 15, in get_user_service
+    logger.info(f"Get All Posts: Successfully fetched {len(users)} posts")
+                                                       ~~~^^^^^^^
+TypeError: object of type 'User' has no len()
+2026-03-19 11:34:42,754 | INFO | app_global | Database connected successfully
+2026-03-19 11:34:48,529 | INFO | app_global | Get All Posts: Successfully fetched 1 posts
+2026-03-19 11:37:07,087 | INFO | app_global | Database connected successfully
+2026-03-19 11:37:14,255 | INFO | app_global | Get All Posts: Successfully fetched 1 posts
+2026-03-19 11:37:30,769 | INFO | app_global | Database connected successfully
+2026-03-19 11:40:30,844 | INFO | app_global | Database connected successfully
+2026-03-19 11:43:01,651 | INFO | app_global | Database connected successfully
+2026-03-19 11:46:48,154 | INFO | app_global | Database connected successfully
+2026-03-19 11:49:22,493 | INFO | app_global | Database connected successfully
+2026-03-19 11:52:35,808 | INFO | app_global | Database connected successfully
+2026-03-19 14:36:25,160 | INFO | app_global | Database connected successfully
+2026-03-19 14:49:27,088 | INFO | app_global | Database connected successfully
+2026-03-19 14:49:42,712 | ERROR | app_global | Error creating user: 'PasswordHash' object is not callable
+2026-03-19 14:50:13,458 | INFO | app_global | Database connected successfully
+2026-03-19 14:51:03,105 | INFO | app_global | Database connected successfully
+2026-03-19 15:12:02,568 | ERROR | app_global | Error creating user: object str can't be used in 'await' expression
+2026-03-19 15:12:41,090 | INFO | app_global | Database connected successfully
+2026-03-19 15:12:50,923 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$gI4yPBjshUI2QxBtV8nBgA$6DfJ03dOpFeRlxfs1hMtTvs9z7Q2gy59jGPM4s4aOks', datetime.datetime(2026, 3, 19, 9, 27, 50, 908009))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:15:51,047 | INFO | app_global | Database connected successfully
+2026-03-19 15:16:06,642 | INFO | app_global | Database connected successfully
+2026-03-19 15:17:14,283 | INFO | app_global | Database connected successfully
+2026-03-19 15:19:25,174 | INFO | app_global | Database connected successfully
+2026-03-19 15:21:13,143 | INFO | app_global | Database connected successfully
+2026-03-19 15:24:30,122 | INFO | app_global | Database connected successfully
+2026-03-19 15:24:55,852 | ERROR | app_global | Error getting user: UserRepo.get_user_repo() takes 1 positional argument but 2 were given
+2026-03-19 15:25:26,467 | INFO | app_global | Database connected successfully
+2026-03-19 15:31:46,300 | INFO | app_global | Database connected successfully
+2026-03-19 15:42:56,025 | INFO | app_global | Database connected successfully
+2026-03-19 15:43:27,940 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$24lbmK3dOhCh7FVkWyi3lw$dD4vF6nUcofF6SCZT/rs/3Mppys5muhEbU1EOmGTJ5M', datetime.datetime(2026, 3, 19, 9, 58, 27, 925704))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:46:23,223 | INFO | app_global | Database connected successfully
+2026-03-19 15:46:31,399 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$btuSXgRhMFJxxc0gl2+AQw$3/5minAhl/UouwNKpuzOnLBsW8vYtK1Otg6L2Q9lOHA', datetime.datetime(2026, 3, 19, 10, 1, 31, 393245))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:46:48,698 | INFO | app_global | Database connected successfully
+2026-03-19 15:46:50,736 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$XHLjLIiJ3C8A/NevDuMz1g$iyEA9X+6stjtw+TfjHiBDcFvcuisCwAkeAHOYfGozDE', datetime.datetime(2026, 3, 19, 10, 1, 50, 728086))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:48:42,742 | INFO | app_global | Database connected successfully
+2026-03-19 15:51:11,538 | INFO | app_global | Database connected successfully
+2026-03-19 15:51:27,132 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$Kbsm0NdQ0LdhB59Y0jW5fA$LMRd/7U3x+lJ6aCgRaGt5bwoTBzNl4UT6APN6uurdy4', datetime.datetime(2026, 3, 19, 10, 6, 27, 117390))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:53:07,570 | INFO | app_global | Database connected successfully
+2026-03-19 15:53:22,456 | INFO | app_global | Database connected successfully
+2026-03-19 15:53:30,981 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$kfi/IUFEu0YC9AwIy6nrQw$AI9XrEXlS9xV92NktgzWcfaGrxcI3t2mZzC0jqDk9Ck', datetime.datetime(2026, 3, 19, 10, 8, 30, 974815))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:53:32,975 | ERROR | app_global | Error creating user: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'user@example.com' for key 'users.email'")
+[SQL: INSERT INTO users (email, password, created_at) VALUES (%s, %s, %s)]
+[parameters: ('user@example.com', '$argon2id$v=19$m=65536,t=3,p=4$ODC8oLmyoYIPgSGYX8HDyA$RCsLF+ZGuhtql+UbeZ3gffYF2C+3SZO1y6w8zaqb9X8', datetime.datetime(2026, 3, 19, 10, 8, 32, 970698))]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-19 15:54:53,874 | INFO | app_global | Database connected successfully
+2026-03-19 15:54:58,010 | ERROR | app_global | Error creating user: 400: Email already exists
+2026-03-19 15:56:07,332 | INFO | app_global | Database connected successfully
+2026-03-19 15:57:15,843 | INFO | app_global | Database connected successfully
+2026-03-19 15:57:36,512 | INFO | app_global | Database connected successfully
+2026-03-19 15:57:45,201 | ERROR | app_global | Error creating user: 400: Email already exists
+2026-03-19 17:02:01,260 | INFO | app_global | Database connected successfully
+2026-03-19 17:10:12,864 | INFO | app_global | Database connected successfully
+2026-03-19 17:12:27,173 | INFO | app_global | Database connected successfully
