@@ -1,28 +1,35 @@
-from typing import Annotated
+from typing import AsyncGenerator, Annotated
 from fastapi import Depends
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import SQLModel
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from app.logger import logger
 
-# Import all models to register them with SQLModel.metadata
+# Import all models so they are registered
 
-# after importing, it automatically bind it in database and create table
-from app.models.post_model import Posts
+# Async MySQL URL
+DATABASE_URL = "mysql+aiomysql://root:yourpassword@localhost:3306/fastAPI"
 
-DATABASE_URL = "mysql+pymysql://root:yourpassword@localhost:3306/fastAPI"
-
-engine = create_engine(
+# Create async engine
+async_engine = create_async_engine(
     DATABASE_URL,
     echo=True,
     pool_pre_ping=True
 )
 
-# Initialize database
-def init_db():
-    SQLModel.metadata.create_all(engine)
-    print("Database connected successfully")
+# Async session factory
+async_session = sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
-# Session dependency
-def get_session():
-    with Session(engine) as session:
+# Initialize database
+async def init_db():
+    async with async_engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+    logger.info("Database connected successfully")
+
+# Async session dependency
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
         yield session
 
-SessionDep = Annotated[Session, Depends(get_session)]
+# Type annotation for FastAPI
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
