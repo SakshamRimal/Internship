@@ -6,7 +6,6 @@ from app.repository.post_repo import post_repo
 from app.schemas.post_schema import PostCreate
 from app.models.post_model import Posts
 
-
 class PostService:
 
     @staticmethod
@@ -23,14 +22,9 @@ class PostService:
             logger.info(f"Get All Posts: Successfully fetched {len(posts)} posts")
             return posts
 
-        except HTTPException:
-            raise
         except Exception:
             logger.exception("Get All Posts: Unexpected system error")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal Server Error"
-            )
+            raise
 
     @staticmethod
     async def create_post_service(session: AsyncSession, post: PostCreate) -> Posts:
@@ -48,14 +42,9 @@ class PostService:
             logger.info(f"Create Post: Success | id={created_post.id}")
             return created_post
 
-        except HTTPException:
-            raise
         except Exception:
             logger.exception(f"Create Post: Critical error | data={post_data}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal Server Error"
-            )
+            raise
 
     @staticmethod
     async def get_post_by_id_service(session: AsyncSession, post_id: int) -> Posts:
@@ -71,15 +60,9 @@ class PostService:
 
             logger.info(f"Get Post By ID: Success | id={post_id}")
             return post
-
-        except HTTPException:
-            raise
         except Exception:
             logger.exception(f"Get Post By ID: System error | id={post_id}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal Server Error"
-            )
+            raise
 
     @staticmethod
     async def update_post_service(session: AsyncSession, post_id: int, post: PostCreate) -> Posts:
@@ -97,14 +80,9 @@ class PostService:
             logger.info(f"Update Post: Success | id={post_id}")
             return updated_post
 
-        except HTTPException:
-            raise
         except Exception:
             logger.exception(f"Update Post: System error | id={post_id}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal Server Error"
-            )
+            raise
 
     @staticmethod
     async def delete_post_service(session: AsyncSession, post_id: int) -> Dict[str, str]:
@@ -121,14 +99,9 @@ class PostService:
             logger.info(f"Delete Post: Success | id={post_id}")
             return {"detail": f"Post with id {post_id} deleted successfully"}
 
-        except HTTPException:
-            raise
         except Exception:
             logger.exception(f"Delete Post: System error | id={post_id}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal Server Error"
-            )
+            raise
 
 
 post_service = PostService()

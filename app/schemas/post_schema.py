@@ -33,3 +33,16 @@ class UserResponse(BaseModel):
         "from_attributes": True
     }
 
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+#response to user
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
