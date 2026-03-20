@@ -25,3 +25,4 @@ if not logger.handlers:
 
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
+
