@@ -11,3 +11,9 @@ Develop a command-line expense tracker with categorization, budgeting, and trans
 Develop a Digital Wallet Transaction System with user tiers, multiple transaction types, and payment processing
 
 ---
+
+**Branch:** `week3`
+Refactor the Digital Wallet system using appropriate design patterns + implement a transaction logging system with Observer pattern
+
+---
+
