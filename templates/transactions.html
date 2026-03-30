@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Digital Wallet</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/wallet" class="nav-logo">
+                <svg viewBox="0 0 32 32" fill="none" class="logo-icon">
+                    <rect width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+                    <path d="M16 10L18 12V20L16 22L14 20V12L16 10Z" fill="white"/>
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#6366F1"/>
+                            <stop offset="1" stop-color="#8B5CF6"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>Digital Wallet</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/wallet" class="nav-link">Wallet</a>
+                <a href="/transactions" class="nav-link active">Transactions</a>
+                <div class="nav-user">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span class="user-email" id="userEmail">Loading...</span>
+                </div>
+                <button class="btn btn-ghost" onclick="logout()">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Transaction History</h1>
+                    <p class="page-subtitle">View all your transactions</p>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="deposit">Deposits</button>
+                <button class="filter-tab" data-filter="withdraw">Withdrawals</button>
+                <button class="filter-tab" data-filter="transfer">Transfers</button>
+                <button class="filter-tab" data-filter="payment">Payments</button>
+            </div>
+
+            <!-- Transactions List -->
+            <div class="card">
+                <div class="card-body">
+                    <div id="transactionsContainer" class="transactions-full-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span>Loading transactions...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="/static/js/wallet.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        let allTransactions = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserData();
+            await loadTransactions();
+            setupFilterTabs();
+        });
+
+        async function loadUserData() {
+            try {
+                const response = await apiRequest('/user/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Failed to load user data:', error);
+            }
+        }
+
+        async function loadTransactions() {
+            try {
+                const response = await apiRequest('/user/transactions');
+                if (response.ok) {
+                    allTransactions = await response.json();
+                    renderTransactions(allTransactions);
+                } else {
+                    document.getElementById('transactionsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <h3>No transactions yet</h3>
+                            <p>Your transaction history will appear here</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                showToast('Failed to load transactions', 'error');
+            }
+        }
+
+        function renderTransactions(transactions) {
+            const container = document.getElementById('transactionsContainer');
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>No transactions found</h3>
+                        <p>Try selecting a different filter</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = transactions.map(tx => `
+                <div class="transaction-item-full">
+                    <div class="transaction-icon ${tx.type}">
+                        ${getTransactionIcon(tx.type)}
+                    </div>
+                    <div class="transaction-details-full">
+                        <div class="transaction-name">${getTransactionName(tx)}</div>
+                        <div class="transaction-date">${formatDate(tx.created_at)}</div>
+                        ${tx.description ? `<div class="transaction-description">${escapeHtml(tx.description)}</div>` : ''}
+                    </div>
+                    <div class="transaction-amount-full ${tx.type === 'deposit' ? 'positive' : 'negative'}">
+                        ${tx.type === 'deposit' ? '+' : '-'}${formatCurrency(tx.amount)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getTransactionIcon(type) {
+            const icons = {
+                deposit: '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>',
+                withdraw: '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>',
+                transfer: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8z"/></svg>',
+                payment: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/></svg>'
+            };
+            return icons[type] || '';
+        }
+
+        function getTransactionName(tx) {
+            const names = {
+                deposit: 'Deposit',
+                withdraw: 'Withdrawal',
+                transfer: `Transfer to ${tx.recipient_id || 'User'}`,
+                payment: `Payment to ${tx.merchant || 'Merchant'}`
+            };
+            return names[tx.type] || tx.description || 'Transaction';
+        }
+
+        function setupFilterTabs() {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const filter = tab.dataset.filter;
+                    if (filter === 'all') {
+                        renderTransactions(allTransactions);
+                    } else {
+                        const filtered = allTransactions.filter(tx => tx.type === filter);
+                        renderTransactions(filtered);
+                    }
+                });
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('tokenType');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>
