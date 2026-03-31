@@ -17,3 +17,9 @@ Refactor the Digital Wallet system using appropriate design patterns + implement
 
 ---
 
+**Branch:** `week3`
+Transaction categorization model using supervised learning techniques
+
+---
+
+
