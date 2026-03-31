@@ -1,0 +1,17 @@
+{
+    "expenses": [
+        {
+            "amount": 200.0,
+            "category": "food",
+            "note": "ate pizza",
+            "date": "2026-03-24"
+        },
+        {
+            "amount": 200.0,
+            "category": "travel",
+            "note": "pokhara",
+            "date": "2026-03-24"
+        }
+    ],
+    "budget": 200.0
+}
