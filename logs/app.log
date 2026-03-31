@@ -1,0 +1,38 @@
+2026-03-30 23:15:57,285 | INFO | app_global | Database connected successfully
+2026-03-30 23:16:26,859 | INFO | app_global | Database connected successfully
+2026-03-30 23:23:37,171 | INFO | app_global | Database connected successfully
+2026-03-30 23:27:09,865 | INFO | app_global | Database connected successfully
+2026-03-30 23:51:35,630 | INFO | app_global | Database connected successfully
+2026-03-30 23:53:00,292 | INFO | app_global | Database connected successfully
+2026-03-30 23:53:50,570 | INFO | app_global | Database connected successfully
+2026-03-30 23:54:17,357 | INFO | app_global | Database connected successfully
+2026-03-30 23:55:53,862 | INFO | app_global | Database connected successfully
+2026-03-30 23:56:11,187 | ERROR | app_global | Error getting all posts: (pymysql.err.OperationalError) (1054, "Unknown column 'users.balance' in 'field list'")
+[SQL: SELECT users.id, users.email, users.password, users.balance, users.tier, users.created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-30 23:56:14,739 | ERROR | app_global | Error getting all posts: (pymysql.err.OperationalError) (1054, "Unknown column 'users.balance' in 'field list'")
+[SQL: SELECT users.id, users.email, users.password, users.balance, users.tier, users.created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-30 23:57:08,170 | INFO | app_global | Database connected successfully
+2026-03-30 23:57:54,299 | ERROR | app_global | Error getting all posts: (pymysql.err.OperationalError) (1054, "Unknown column 'users.balance' in 'field list'")
+[SQL: SELECT users.id, users.email, users.password, users.balance, users.tier, users.created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-30 23:58:55,423 | ERROR | app_global | Error getting all posts: (pymysql.err.OperationalError) (1054, "Unknown column 'users.balance' in 'field list'")
+[SQL: SELECT users.id, users.email, users.password, users.balance, users.tier, users.created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-30 23:59:17,653 | INFO | app_global | Database connected successfully
+2026-03-31 00:00:36,524 | INFO | app_global | Database connected successfully
+2026-03-31 00:02:38,791 | INFO | app_global | Database connected successfully
+2026-03-31 00:02:42,004 | ERROR | app_global | Error getting user: 404: User not found
+2026-03-31 00:02:46,984 | ERROR | app_global | Error getting user: 404: User not found
+2026-03-31 00:03:40,855 | INFO | app_global | Database connected successfully
+2026-03-31 00:06:10,286 | INFO | app_global | Database connected successfully
+2026-03-31 00:07:24,130 | INFO | app_global | Database connected successfully
+2026-03-31 00:08:37,067 | ERROR | app_global | Error creating user: 400: Email already exists
+2026-03-31 00:17:14,300 | INFO | app_global | Database connected successfully
+2026-03-31 00:24:58,610 | INFO | app_global | Database connected successfully
+2026-03-31 00:37:20,122 | INFO | app_global | Database connected successfully
