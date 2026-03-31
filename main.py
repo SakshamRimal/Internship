@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.controllers import post_controller, user_controller, auth_controller
+from app.controllers import user_controller, auth_controller, wallet_controller
 from app.core.db import init_db
 
 
@@ -10,7 +10,7 @@ async def lifespan(app: FastAPI):
     yield       # application runs here it pauses the function
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(post_controller.router)
-app.include_router(user_controller.router)
 
+app.include_router(user_controller.router)
+app.include_router(wallet_controller.router)
 app.include_router(auth_controller.router)

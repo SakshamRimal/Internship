@@ -2,9 +2,9 @@ from datetime import datetime, timezone, timedelta
 from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from app.schemas.post_schema import TokenData
+from app.schemas.wallet_schema import TokenData
 from app.core.db import SessionDep
-from app.models.post_model import User
+from app.models.wallet_model import User
 from sqlmodel import select
 
 

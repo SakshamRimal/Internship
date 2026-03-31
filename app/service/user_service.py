@@ -2,7 +2,7 @@ from fastapi import HTTPException , status
 from app.logger import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repository.user_repo import user_repo
-from app.schemas.post_schema import UserBase
+from app.schemas.wallet_schema import UserBase
 from app.security.hash import hash_password
 
 class UserService:

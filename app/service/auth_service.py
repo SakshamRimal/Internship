@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from app.repository.auth_repo import auth_repo
 from app.security.hash import verify_password , hash_password
-from app.schemas.post_schema import UserLogin
+from app.schemas.wallet_schema import UserLogin
 from app.security.oauth2 import create_access_token
 
 class AuthService:

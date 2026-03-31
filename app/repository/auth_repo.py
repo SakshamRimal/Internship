@@ -2,8 +2,8 @@ from fastapi import status , HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from app.schemas.post_schema import UserLogin
-from app.models.post_model import User, Posts
+from app.schemas.wallet_schema import UserLogin
+from app.models.wallet_model import User
 
 
 class AuthRepo:

@@ -2,7 +2,7 @@ from fastapi import status, Depends
 from app.service.auth_service import auth_service
 from fastapi import APIRouter
 from app.core.db import SessionDep
-from app.schemas.post_schema import UserLogin, PostResponse , Token
+from app.schemas.wallet_schema import UserLogin, Token
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
 router = APIRouter(

@@ -1,4 +1,4 @@
-from app.models.post_model import User
+from app.models.wallet_model import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 

@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter
 from app.service.user_service import user_service
 from app.core.db import SessionDep
-from app.schemas.post_schema import UserResponse , UserBase
+from app.schemas.wallet_schema import UserResponse , UserBase
 router = APIRouter(
     prefix="/user",
     tags=["users"],
